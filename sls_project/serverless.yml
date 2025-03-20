@@ -1,0 +1,35 @@
+
+service: sls-project
+
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+# you can overwrite defaults here
+  stage: dev
+  region: eu-west-1
+
+# you can add statements to the Lambda function's IAM Role here
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: { "Fn::Join": ["", ["arn:aws:s3:::*", "" ] ]  }
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      # https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/dev/hello
+      - http:
+          path: hello
+          method: get
+      - s3: my-custom-bucket1
+  post:
+    handler: postHandler.post
+    events:
+      # https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/dev/postHandler/post
+      - http:
+          path: postHandler/post
+          method: post
+      - s3: my-custom-bucket2
